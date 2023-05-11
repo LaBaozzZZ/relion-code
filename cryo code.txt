@@ -1,0 +1,146 @@
+#-----------------------------------------------------------------------------------------------------------------------
+#####################
+#                                      #
+#           WSL的安装           #
+#                                      #
+#####################
+
+#以管理员身份打开Windows PowerShell
+wsl --install                     #安装wsl
+
+wsl --list                       #查看wsl
+
+wsl --unregister Ubuntu                   #卸载wsl
+
+wsl --export Ubuntu D:\wslbak.tar                   #导出wsl
+
+wsl --improt Ubuntu D:\wslbak.tar --version2                #导入wsl
+
+ubuntu config --default-user lyr               # 设置默认用户为lyr
+
+
+#-----------------------------------------------------------------------------------------------------------------------
+#####################
+#                                      #
+#            更改环境             #
+#                                      #
+#####################
+#（还没搞懂）
+sudo cp /etc/apt/sources.list /etc/apt/sources.list.bak
+vim sources
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ jammy main restricted universe multiverse
+# deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ jammy main restricted universe multiverse
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ jammy-updates main restricted universe multiverse
+# deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ jammy-updates main restricted universe multiverse
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ jammy-backports main restricted universe multiverse
+# deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ jammy-backports main restricted universe multiverse
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ jammy-security main restricted universe multiverse
+# # deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ jammy-security main restricted universe multiverse
+deb http://security.ubuntu.com/ubuntu/ jammy-security main restricted universe multiverse
+# deb-src http://security.ubuntu.com/ubuntu/ jammy-security main restricted universe multiverse
+
+
+#-----------------------------------------------------------------------------------------------------------------------
+#####################
+#                                      #
+#         conda的安装          #
+#                                      #
+#####################
+
+cd /home/lyr
+
+wget -c https://mirrors.bfsu.edu.cn/anaconda/miniconda/Miniconda3-latest-Linux-x86_64.sh                #下载CONDA，用的清华的镜像
+
+chmod 777 Miniconda3-latest-Linux-x86_64.sh         #刚下载好的安装包没有可执行权限，所以需要先给权限
+
+bash Miniconda3-latest-Linux-x86_64.sh              #运行.sh 
+
+cd miniconda3/bin       
+
+source activate             #运行
+
+conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/
+conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/
+conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/conda-forge/
+conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/bioconda/                      #添加清华的镜像
+
+conda config --set show_channel_urls yes            #查看生成.condarc的文件
+
+conda config --get channels                             #查看安装的频道
+
+vim ~/.condarc                                              #编辑conda的配置文件
+i         #进入编辑模式，把defaults删掉，如果有defaults存在的话每次安装软件的时候会去默认的镜像源里面找一遍，会增加不必要的时间成本
+ESC      #退出编辑模式
+:wq      #保存并退出
+
+
+
+
+#-----------------------------------------------------------------------------------------------------------------------
+
+
+sudo install gcc g++ cmake make
+
+
+#-----------------------------------------------------------------------------------------------------------------------
+#########################
+#                                              #
+#           CUDA下载安装             #
+#                                              #
+#########################
+
+nvidia-smi             #查看nvidia显卡驱动版本
+
+#去官网下载CUDA       https://developer.nvidia.com/cuda-toolkit-archive
+
+sudo sh cuda_10.1.168_418.67_linux.run         #安装
+#把显卡驱动的选项取消掉，选择Install回车
+
+sudo vim ~/.bashrc           #配置环境（添加为系统变量sudo vim /etc/profile）
+i                                       #进入编辑模式
+#加入以下语句
+#CUDA101
+export PATH="/usr/local/cuda-10.1/bin:$PATH"
+export LD_LIBRARY_PATH="/usr/local/cuda-10.1/lib64:$LD_LIBRARY_PATH"
+
+ESC       #退出编辑
+:wq       #保存退出
+
+source ~/.bashrc
+
+
+#-----------------------------------------------------------------------------------------------------------------------
+#########################
+#                                              #
+#         openMPI下载安装          #
+#                                              #
+#########################
+
+#下载地址   https://www.open-mpi.org/
+#将文件上传到本地
+tar -zxfv openmpi-4.0.4.tar.gz            #解压
+
+./configure --prefix=/usr/local/openmpi                 #配置安装路径
+
+make
+
+make install
+
+#设置环境变量
+export PATH=/usr/local/bin:$PATH
+export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+
+#测试
+cd openmpi-4.0.4/examples
+make 
+mpirun -np 4 hello_c                 
+
+
+
+
+
+
+
+
+
+
